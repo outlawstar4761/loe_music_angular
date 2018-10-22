@@ -1,0 +1,38 @@
+<mat-card class="card">
+  <mat-card-title *ngIf="currentPlaying">
+    <ng-marquee>
+      <mark style="background-color:inherit">{{ currentPlaying.title }} by <a routerLink='/artist/{{currentPlaying.artist}}'>{{currentPlaying.artist}}</a></mark>
+    </ng-marquee>
+  </mat-card-title>
+  <mat-card-subtitle *ngIf="currentPlaying">
+    ({{ currentTrackPostion | humanTime }} / {{ currentTrackDuration | humanTime }})
+  </mat-card-subtitle>
+  <mat-card-content>
+    <a *ngIf="currentPlaying" routerLink='/album/{{currentPlaying.album}}'>
+      <img [src]="currentPlaying.cover_path" class="albumPreview">
+    </a>
+    <mat-progress-bar *ngIf="currentPlaying" mode="determinate" [value]="currentTrackProgress" style="margin-top:5%"></mat-progress-bar>
+    <h5 class="mat-body">Volume: {{ volume }}</h5>
+    <div *ngFor="let song of playlist; index as i;">
+      <a playFromPlaylist [song]="song">{{song.title}}</a>
+      <a removeFromPlaylist [song]="song" [index]="i"><small>(remove)</small></a>
+      <span *ngIf="currentPlaying && currentPlaying.id == song.id"> - (current)</span>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <div class="button-row">
+      <button mat-icon-button previousTrack><mat-icon>skip_previous</mat-icon></button>
+      <button mat-icon-button color="accent" playMusic><mat-icon>play_arrow</mat-icon></button>
+      <button mat-icon-button color="accent" pauseMusic><mat-icon>pause</mat-icon></button>
+      <button mat-icon-button color="accent" stopMusic><mat-icon>stop</mat-icon></button>
+      <button mat-icon-button nextTrack><mat-icon>skip_next</mat-icon></button>
+    </div>
+    <div class="button-row">
+      <button mat-icon-button increaseVolume>+</button>
+      <button mat-icon-button decreaseVolume>-</button>
+      <button mat-icon-button muteMusic><mat-icon>{{mute ? 'volume_off' : 'volume_mute'}}</mat-icon> </button>
+      <button mat-icon-button repeatMusic><mat-icon>repeat</mat-icon></button>
+      <button mat-icon-button clearPlaylist><mat-icon>clear_all</mat-icon></button>
+    </div>
+  </mat-card-actions>
+</mat-card>

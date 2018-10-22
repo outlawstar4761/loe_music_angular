@@ -1,0 +1,18 @@
+<mat-card class="card" *ngFor="let album of albums">
+  <mat-card-title>{{album.title}}</mat-card-title>
+  <mat-card-subtitle><a routerLink='/artist/{{album.artist}}'>{{album.artist}}</a>, {{album.year}}</mat-card-subtitle>
+  <mat-card-content>
+    <img [src]="album.cover_path" class="albumPreview">
+    <ul *ngFor="let song of album.songs">
+      <button mat-button color="primary" class="song-title-btn" style="overflow:hidden" [musicPlayer]="'play'" [song]="song">{{ song.title }}</button>
+      <button mat-mini-fab color="accent" musicPlayer [song]="song">+</button>
+      <mat-divider></mat-divider>
+    </ul>
+  </mat-card-content>
+  <mat-card-actions>
+    <div class="button-row play-btns">
+      <button mat-raised-button color="primary" playAll [songs]="album.songs">Play all</button>
+      <button mat-raised-button color="accent" playAll [songs]="album.songs" [play]="false">Add all</button>
+    </div>
+  </mat-card-actions>
+</mat-card>

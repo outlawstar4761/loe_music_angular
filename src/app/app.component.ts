@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ApiService } from './services/api.service';
+import { Album } from './models/album';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'loe-music';
+  recentAlbums:Album[];
+
+  constructor(private ApiService:ApiService){
+    this.ApiService.albums.subscribe((albums)=>{
+      this.recentAlbums = [];
+      this.recentAlbums = albums;
+    });
+  }
 }

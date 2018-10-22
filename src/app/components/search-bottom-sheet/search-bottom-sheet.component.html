@@ -1,0 +1,15 @@
+<form #f="ngForm" (ngSubmit)="onSubmit(f.value)">
+  <mat-form-field>
+    <mat-select name="option" placeholder="Option" ngModel>
+      <mat-option *ngFor="let option of searchOptions" [value]="option.route">
+        {{option.display}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput type="text" name="query" placeholder="Query" ngModel>
+  </mat-form-field>
+  <p>
+    <button mat-raised-button type="submit" color="accent">Search</button>
+  </p>
+</form>
