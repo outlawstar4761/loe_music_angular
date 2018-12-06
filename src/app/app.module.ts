@@ -17,6 +17,7 @@ import { RecentAlbumsGridComponent } from './components/recent-albums-grid/recen
 import { ArtistGridComponent } from './components/artist-grid/artist-grid.component';
 import { SongViewComponent } from './components/song-view/song-view.component';
 import { SearchBottomSheetComponent } from './components/search-bottom-sheet/search-bottom-sheet.component';
+import { GenreGridComponent } from './components/genre-grid/genre-grid.component';
 
 const appRoutes: Routes = [
   {path:'',redirectTo:'/recent',pathMatch:'full'},
@@ -25,6 +26,7 @@ const appRoutes: Routes = [
   {path:'album/:title',component:AlbumViewComponent},
   {path:'artist/:artist',component:ArtistGridComponent},
   {path:'song/:title',component:SongViewComponent},
+  {path:'genre/:genre',component:GenreGridComponent}
 ];
 
 @NgModule({
@@ -36,7 +38,8 @@ const appRoutes: Routes = [
     RecentAlbumsGridComponent,
     ArtistGridComponent,
     SongViewComponent,
-    SearchBottomSheetComponent
+    SearchBottomSheetComponent,
+    GenreGridComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
