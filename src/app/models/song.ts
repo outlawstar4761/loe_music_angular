@@ -27,6 +27,7 @@ export class Song {
     this.album = obj && obj.album || null;
     this.year = obj && obj.year || null;
     this.track_number = obj && obj.track_number || null;
+    this.genre = obj && obj.genre || null;
     this.band = obj && obj.band || null;
     this.length = obj && obj.length || null;
     this.publisher = obj && obj.publisher || null;

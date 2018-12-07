@@ -59,6 +59,7 @@ export class ApiService {
           if(song.album === album){
             newAlbum.songs.push(song);
             newAlbum.year = song.year;
+            newAlbum.genre = song.genre;
             newAlbum.artist = song.artist;
             newAlbum.cover_path = song.cover_path;
           }
