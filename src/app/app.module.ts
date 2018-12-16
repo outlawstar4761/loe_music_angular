@@ -52,8 +52,8 @@ const appRoutes: Routes = [
     FormsModule
   ],
   providers: [
-    {provide:'API_ENDPOINT',useValue:'http://outlawdesigns.ddns.net/API/LOE/music/'},
-    {provide:'LOE_DOMAIN',useValue:'http://outlawdesigns.ddns.net'}
+    {provide:'API_ENDPOINT',useValue:'http://api.outlawdesigns.io/LOE/music/'},
+    {provide:'LOE_DOMAIN',useValue:'http://loe.outlawdesigns.io/'}
   ],
   entryComponents:[SearchBottomSheetComponent],
   bootstrap: [AppComponent]

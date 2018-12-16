@@ -15,19 +15,23 @@ import { Album } from '../models/album';
 export class ApiService {
   endpoint:string;
   domain:string;
+  regexPattern:RegExp;
   tmpAlbums:Album[];
   albums:Subject<Album[]> = new BehaviorSubject<Album[]>([]);
 
   constructor(@Inject('API_ENDPOINT') ENDPOINT:string,@Inject('LOE_DOMAIN') DOMAIN:string,private http:HttpClient) {
     this.endpoint = ENDPOINT;
     this.domain = DOMAIN;
+    this.regexPattern = /\/LOE\//;
   }
   search(field:string,query:string):Observable<Song[]>{
     let url = this.endpoint + 'search/' + field + '/' + query;
     return this.http.get<Song[]>(url).pipe(map(response=>{
       return response.map((song)=>{
-        song.file_path = this.domain + song.file_path;
-        song.cover_path = this.domain + song.cover_path;
+        song.file_path = song.file_path.replace(this.regexPattern,this.domain);
+        song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
+        //song.file_path = this.domain + song.file_path;
+        //song.cover_path = this.domain + song.cover_path;
         song.url = song.file_path;
         return new Song(song);
       })
