@@ -12,6 +12,7 @@ export class AppComponent {
   recentAlbums:Album[];
 
   constructor(private ApiService:ApiService){
+    this.ApiService.checkCookie();
     this.ApiService.albums.subscribe((albums)=>{
       this.recentAlbums = [];
       this.recentAlbums = albums;

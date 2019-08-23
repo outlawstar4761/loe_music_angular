@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -18,15 +19,17 @@ import { ArtistGridComponent } from './components/artist-grid/artist-grid.compon
 import { SongViewComponent } from './components/song-view/song-view.component';
 import { SearchBottomSheetComponent } from './components/search-bottom-sheet/search-bottom-sheet.component';
 import { GenreGridComponent } from './components/genre-grid/genre-grid.component';
+import { LoginComponent } from './components/login/login.component';
 
 const appRoutes: Routes = [
-  {path:'',redirectTo:'/recent',pathMatch:'full'},
+  {path:'',redirectTo:'/login',pathMatch:'full'},
   {path:'player',component:MusicPlayerComponent},
   {path:'recent',component:RecentAlbumsGridComponent},
   {path:'album/:title',component:AlbumViewComponent},
   {path:'artist/:artist',component:ArtistGridComponent},
   {path:'song/:title',component:SongViewComponent},
-  {path:'genre/:genre',component:GenreGridComponent}
+  {path:'genre/:genre',component:GenreGridComponent},
+  {path:'login',component:LoginComponent}
 ];
 
 @NgModule({
@@ -39,7 +42,8 @@ const appRoutes: Routes = [
     ArtistGridComponent,
     SongViewComponent,
     SearchBottomSheetComponent,
-    GenreGridComponent
+    GenreGridComponent,
+    LoginComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -52,8 +56,10 @@ const appRoutes: Routes = [
     FormsModule
   ],
   providers: [
-    {provide:'API_ENDPOINT',useValue:'http://api.outlawdesigns.io/LOE/music/'},
-    {provide:'LOE_DOMAIN',useValue:'http://loe.outlawdesigns.io/'}
+    CookieService,
+    {provide:'API_ENDPOINT',useValue:'http://api.outlawdesigns.io:9669/music/'},
+    {provide:'LOE_DOMAIN',useValue:'http://loe.outlawdesigns.io/'},
+    {provide: 'AUTH_ENDPOINT',useValue:'http://api.outlawdesigns.io:9669/'}
   ],
   entryComponents:[SearchBottomSheetComponent],
   bootstrap: [AppComponent]
