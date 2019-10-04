@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { StarRatingModule } from 'angular-star-rating';
 
 import { NgxSoundmanager2Module } from 'ngx-soundmanager2';
 import { MaterialModule } from './material.module';
@@ -20,6 +21,9 @@ import { SongViewComponent } from './components/song-view/song-view.component';
 import { SearchBottomSheetComponent } from './components/search-bottom-sheet/search-bottom-sheet.component';
 import { GenreGridComponent } from './components/genre-grid/genre-grid.component';
 import { LoginComponent } from './components/login/login.component';
+import { RatingComponent } from './components/rating/rating.component';
+import { SavePlaylistComponent } from './components/save-playlist/save-playlist.component';
+
 
 const appRoutes: Routes = [
   {path:'',redirectTo:'/login',pathMatch:'full'},
@@ -43,7 +47,9 @@ const appRoutes: Routes = [
     SongViewComponent,
     SearchBottomSheetComponent,
     GenreGridComponent,
-    LoginComponent
+    LoginComponent,
+    RatingComponent,
+    SavePlaylistComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -53,15 +59,16 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     NgMarqueeModule,
     MaterialModule,
-    FormsModule
+    FormsModule,
+    StarRatingModule.forRoot()
   ],
   providers: [
     CookieService,
-    {provide:'API_ENDPOINT',useValue:'http://api.outlawdesigns.io:9669/music/'},
+    {provide:'API_ENDPOINT',useValue:'http://api.outlawdesigns.io:4669/song/'},
     {provide:'LOE_DOMAIN',useValue:'http://loe.outlawdesigns.io/'},
-    {provide: 'AUTH_ENDPOINT',useValue:'http://api.outlawdesigns.io:9669/'}
+    {provide: 'AUTH_ENDPOINT',useValue:'http://api.outlawdesigns.io:9661/'}
   ],
-  entryComponents:[SearchBottomSheetComponent],
+  entryComponents:[SearchBottomSheetComponent,RatingComponent,SavePlaylistComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

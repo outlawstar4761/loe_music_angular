@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MusicPlayerService } from 'ngx-soundmanager2';
 import { ApiService } from '../../services/api.service';
 import { Album } from '../../models/album';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { RatingComponent } from '../rating/rating.component';
+import { SavePlaylistComponent } from '../save-playlist/save-playlist.component';
 
 @Component({
   selector: 'app-music-player',
@@ -23,7 +26,7 @@ export class MusicPlayerComponent implements OnInit {
   private _musicPlayerTrackIdSubscription:any;
   private _musicPlayerVolumeSubscription:any;
 
-  constructor(private _musicPlayerService:MusicPlayerService,private ApiService:ApiService) {
+  constructor(private _musicPlayerService:MusicPlayerService,private ApiService:ApiService,public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -56,6 +59,24 @@ export class MusicPlayerComponent implements OnInit {
   }
   get playlist():any{
     return this._musicPlayerService.getPlaylist();
+  }
+  _buildPlayListIds():Number[]{
+    let playList = this._musicPlayerService.getPlaylist();
+    let songIds = [];
+    playList.forEach(song=>{songIds.push(song.id)});
+    return songIds;
+  }
+  openRatingDialog():void{
+    let dialogRef = this.dialog.open(RatingComponent,{
+      width: '250px',
+      data:{song:this.currentPlaying}
+    });
+  }
+  openPlayListDialog():void{
+    let dialogRef = this.dialog.open(SavePlaylistComponent,{
+      width:'250px',
+      data:{songIds:this._buildPlayListIds()}
+    });
   }
 
 }

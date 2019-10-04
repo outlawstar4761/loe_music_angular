@@ -1,5 +1,5 @@
 export class SoundManagerSong {
-  id:string;
+  id:number;
   title:string;
   artist:string;
   url:string;

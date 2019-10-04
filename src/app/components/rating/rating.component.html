@@ -1,0 +1,7 @@
+<h1 mat-dialog-title>Rating: {{data.song.title}}</h1>
+<div mat-dialog-content>
+  <star-rating [starType]="'svg'" [rating]="0" (starClickChange)="onStarClick($event)"></star-rating>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClose()">Ok</button>
+</div>

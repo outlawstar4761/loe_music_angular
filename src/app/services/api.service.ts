@@ -71,8 +71,6 @@ export class ApiService {
       return response.map((song)=>{
         song.file_path = song.file_path.replace(this.regexPattern,this.domain);
         song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
-        //song.file_path = this.domain + song.file_path;
-        //song.cover_path = this.domain + song.cover_path;
         song.url = song.file_path;
         return new Song(song);
       })
@@ -114,15 +112,12 @@ export class ApiService {
       this.albums.next(this.tmpAlbums);
     });
   }
+  rateSong(songId:number,rating:number):Observable<any>{
+    let url = this.endpoint + 'rate/' + songId;
+    return this.http.post(url,{rating:rating},{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
+  }
+  savePlaylist(playlist){
+    let url = this.endpoint + 'list/';
+    return this.http.post(url,playlist,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
+  }
 }
-/*
-let newAlbum = {
-  title:album,
-  songs:songs,
-  year:songs[0].year,
-  artist:songs[0].artist,
-  cover_path:songs[0].cover_path
-};
-newAlbums.push(new Album(newAlbum));
-
-*/
