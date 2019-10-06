@@ -23,7 +23,7 @@ export class SavePlaylistComponent implements OnInit {
     console.log(this.label);
     console.log(this.data.songIds);
     this.dialogRef.close();
-    //this.ApiService.savePlaylist({label:this.label,songs:this.songIds}).subscribe(console.log);
+    this.ApiService.savePlaylist({label:this.label,songIds:this.data.songIds}).subscribe(console.log);
   }
 
 }
