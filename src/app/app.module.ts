@@ -23,6 +23,9 @@ import { GenreGridComponent } from './components/genre-grid/genre-grid.component
 import { LoginComponent } from './components/login/login.component';
 import { RatingComponent } from './components/rating/rating.component';
 import { SavePlaylistComponent } from './components/save-playlist/save-playlist.component';
+import { LabelViewComponent } from './components/label-view/label-view.component';
+import { CountryViewComponent } from './components/country-view/country-view.component';
+import { YearViewComponent } from './components/year-view/year-view.component';
 
 
 const appRoutes: Routes = [
@@ -33,6 +36,9 @@ const appRoutes: Routes = [
   {path:'artist/:artist',component:ArtistGridComponent},
   {path:'song/:title',component:SongViewComponent},
   {path:'genre/:genre',component:GenreGridComponent},
+  {path:'label/:label',component:LabelViewComponent},
+  {path:'country/:country',component:CountryViewComponent},
+  {path:'year/:year',component:YearViewComponent},
   {path:'login',component:LoginComponent}
 ];
 
@@ -49,7 +55,10 @@ const appRoutes: Routes = [
     GenreGridComponent,
     LoginComponent,
     RatingComponent,
-    SavePlaylistComponent
+    SavePlaylistComponent,
+    LabelViewComponent,
+    CountryViewComponent,
+    YearViewComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),

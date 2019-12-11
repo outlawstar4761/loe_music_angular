@@ -9,7 +9,15 @@ import { NavbarComponent } from '../navbar/navbar.component';
   styleUrls: ['./search-bottom-sheet.component.css']
 })
 export class SearchBottomSheetComponent implements OnInit {
-  searchOptions:any[] = [{display:'Song',route:'song'},{display:'Album',route:'album'},{display:'Artist',route:'artist'},{display:'Genre',route:'genre'}];
+  searchOptions:any[] = [
+    {display:'Song',route:'song'},
+    {display:'Album',route:'album'},
+    {display:'Artist',route:'artist'},
+    {display:'Label',route:'label'},
+    {display:'Country',route:'country'},
+    {display:'Genre',route:'genre'},
+    {display:'Year',route:'year'}
+  ];
 
   constructor(private bottomSheetRef:MatBottomSheetRef<NavbarComponent>,private router:Router) { }
 

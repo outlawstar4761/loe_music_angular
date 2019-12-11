@@ -24,7 +24,13 @@ export class ApiService {
   tmpAlbums:Album[];
   albums:Subject<Album[]> = new BehaviorSubject<Album[]>([]);
 
-  constructor(@Inject('API_ENDPOINT') ENDPOINT:string,@Inject('LOE_DOMAIN') DOMAIN:string,@Inject('AUTH_ENDPOINT') AUTH:string, private http:HttpClient,private cookie:CookieService,private router:Router) {
+  constructor(
+    @Inject('API_ENDPOINT') ENDPOINT:string,
+    @Inject('LOE_DOMAIN') DOMAIN:string,
+    @Inject('AUTH_ENDPOINT') AUTH:string,
+    private http:HttpClient,
+    private cookie:CookieService,
+    private router:Router) {
     this.endpoint = ENDPOINT;
     this.domain = DOMAIN;
     this.authEndPoint = AUTH;
@@ -82,6 +88,10 @@ export class ApiService {
   }
   getRecent(limit:number):Observable<Song[]>{
     let url = this.endpoint + 'recent/' + limit;
+    return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response.map((song)=>{return new Song(song)})}));
+  }
+  getRandomPlayList(genre:string,limit:number){
+    let url = this.endpoint + 'random/' + genre + '/' + limit;
     return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response.map((song)=>{return new Song(song)})}));
   }
   parseAlbums(songs:Song[]){
