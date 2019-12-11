@@ -73,7 +73,7 @@ const appRoutes: Routes = [
   ],
   providers: [
     CookieService,
-    {provide:'API_ENDPOINT',useValue:'http://api.outlawdesigns.io:4669/song/'},
+    {provide:'API_ENDPOINT',useValue:'http://api.outlawdesigns.io:9669/song/'},
     {provide:'LOE_DOMAIN',useValue:'http://loe.outlawdesigns.io/'},
     {provide: 'AUTH_ENDPOINT',useValue:'http://api.outlawdesigns.io:9661/'}
   ],

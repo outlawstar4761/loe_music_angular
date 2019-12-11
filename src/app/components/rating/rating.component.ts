@@ -26,7 +26,7 @@ export class RatingComponent implements OnInit {
   onClose():void{
     console.log(this.data.song.id + ": " + this.rating);
     this.dialogRef.close();
-    //this.ApiService.rateSong(this.data.song.id,this.rating).subscribe(console.log);
+    this.ApiService.rateSong(this.data.song.id,this.rating).subscribe(console.log);
   }
 
 }
