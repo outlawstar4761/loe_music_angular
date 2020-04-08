@@ -75,11 +75,11 @@ const appRoutes: Routes = [
   ],
   providers: [
     CookieService,
-    {provide:'API_ENDPOINT',useValue:'http://api.outlawdesigns.io:9669/song/'},
+    {provide:'API_ENDPOINT',useValue:'https://api.outlawdesigns.io:9669/song/'},
     {provide:'LOE_DOMAIN',useValue:'http://loe.outlawdesigns.io/'},
-    {provide: 'AUTH_ENDPOINT',useValue:'http://api.outlawdesigns.io:9661/'}
+    {provide: 'AUTH_ENDPOINT',useValue:'https://api.outlawdesigns.io:9661/'}
   ],
-  entryComponents:[SearchBottomSheetComponent,RatingComponent,SavePlaylistComponent],
+  entryComponents:[SearchBottomSheetComponent,RatingComponent,SavePlaylistComponent,RandomPlaylistBottomSheetComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
