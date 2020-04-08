@@ -92,7 +92,12 @@ export class ApiService {
   }
   getRandomPlayList(genre:string,limit:number){
     let url = this.endpoint + 'random/' + genre + '/' + limit;
-    return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response.map((song)=>{return new Song(song)})}));
+    return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response.map((song)=>{
+      song.file_path = song.file_path.replace(this.regexPattern,this.domain);
+      song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
+      song.url = song.file_path;
+      return new Song(song);
+    })}));
   }
   parseAlbums(songs:Song[]){
     let albumLabels = [];
