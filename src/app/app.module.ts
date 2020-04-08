@@ -26,6 +26,7 @@ import { SavePlaylistComponent } from './components/save-playlist/save-playlist.
 import { LabelViewComponent } from './components/label-view/label-view.component';
 import { CountryViewComponent } from './components/country-view/country-view.component';
 import { YearViewComponent } from './components/year-view/year-view.component';
+import { RandomPlaylistBottomSheetComponent } from './components/random-playlist-bottom-sheet/random-playlist-bottom-sheet.component';
 
 
 const appRoutes: Routes = [
@@ -58,7 +59,8 @@ const appRoutes: Routes = [
     SavePlaylistComponent,
     LabelViewComponent,
     CountryViewComponent,
-    YearViewComponent
+    YearViewComponent,
+    RandomPlaylistBottomSheetComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),

@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 
 import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
 import { SearchBottomSheetComponent } from '../search-bottom-sheet/search-bottom-sheet.component';
+import { RandomPlaylistBottomSheetComponent } from '../random-playlist-bottom-sheet/random-playlist-bottom-sheet.component';
 
 @Component({
   selector: 'app-navbar',
@@ -22,6 +23,9 @@ export class NavbarComponent {
 
   showSearch():void{
     this.bottomSheet.open(SearchBottomSheetComponent);
+  }
+  showRandomPlayList():void{
+    this.bottomSheet.open(RandomPlaylistBottomSheetComponent);
   }
 
 }
