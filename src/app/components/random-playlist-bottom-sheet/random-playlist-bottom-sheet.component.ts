@@ -25,7 +25,8 @@ export class RandomPlaylistBottomSheetComponent implements OnInit {
   onSubmit(value):void{
     this.ApiService.getRandomPlayList(value.genre,value.limit).subscribe((songs)=>{
       songs.forEach((song)=>{
-        this._musicPlayerService.addToPlaylist(song);
+        console.log(song);
+        this._musicPlayerService.addTrack(song);
       });
       this.bottomSheetRef.dismiss();
     });
