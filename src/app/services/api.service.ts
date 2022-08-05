@@ -48,7 +48,8 @@ export class ApiService {
     this.authenticate(username,password).subscribe((response)=>{
       if(!response['error']){
         this.authToken = response.token;
-        this.cookie.set('auth_token',this.authToken);
+        //for prod, change to outlawdesigns.io && true
+        this.cookie.set('auth_token',this.authToken,200,'/','localhost',false,'Strict');
         this.checkCookie();
       }else{
         this.router.navigateByUrl('/login');
@@ -60,6 +61,7 @@ export class ApiService {
     return this.http.get<any>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
   }
   checkCookie():void{
+    console.log('checking cookie...');
     if(this.cookie.check('auth_token')){
       this.authToken = this.cookie.get('auth_token');
       this.verifyToken().subscribe((response)=>{
@@ -100,29 +102,26 @@ export class ApiService {
     })}));
   }
   parseAlbums(songs:Song[]){
-    let albumLabels = [];
-    songs.forEach((song)=>{
-      if(albumLabels.indexOf(song.album) === -1){
-        albumLabels.push(song.album);
-      }
-    });
-    return albumLabels;
+    return songs.map((s)=>{return s.album}).filter((v,i,self)=>{return self.indexOf(v) == i})
   }
   buildAlbums(albums:string[]):void{
     this.tmpAlbums = [];
     albums.forEach((album)=>{
-      let newAlbum = new Album({title:album});
       this.search('album',album).subscribe((songs)=>{
-        songs.forEach((song)=>{
-          if(song.album === album){
-            newAlbum.songs.push(song);
-            newAlbum.year = song.year;
-            newAlbum.genre = song.genre;
-            newAlbum.artist = song.artist;
-            newAlbum.cover_path = song.cover_path;
-          }
-        });
-        this.tmpAlbums.push(newAlbum);
+        let tmpAlbums = this.groupAlbums(songs);
+        for(let key in tmpAlbums){
+          let newAlbum = new Album(
+            {
+              title:tmpAlbums[key][0].album,
+              year:tmpAlbums[key][0].year,
+              genres:this.parseGenres(tmpAlbums[key][0].genre),
+              artist:tmpAlbums[key][0].artist,
+              cover_path:tmpAlbums[key][0].cover_path,
+              songs:tmpAlbums[key].sort((a,b)=>{return a.track_number - b.track_number})
+            }
+          );
+          this.tmpAlbums.push(newAlbum);
+        }
       });
       this.albums.next(this.tmpAlbums);
     });
@@ -135,4 +134,48 @@ export class ApiService {
     let url = this.endpoint + 'list/';
     return this.http.post(url,playlist,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
   }
+  groupAlbums(songs){
+    return songs.reduce((accumulator,song)=>{
+      if(!accumulator[song['album'] + '_' + song['artist'] + '_' + song['year']]) { accumulator[song['album'] + '_' + song['artist'] + '_' + song['year']] = []}
+      accumulator[song['album'] + '_' + song['artist'] + '_' + song['year']].push(song);
+      return accumulator;
+    },{});
+  }
+  parseGenres(genre){
+    let genres = [];
+    let pieces = genre.split(';');
+    pieces.map((piece)=>{
+      let smallPieces = piece.split(',');
+      smallPieces.forEach((sp)=>{
+        genres.push(sp.replace(/\(.*/,'').trim());
+      });
+      return smallPieces;
+    });
+    return genres;
+  }
 }
+
+/*
+
+genres = [
+    'Black Metal (early), Black.Doom Metal (later)',
+    'Grindcore, Black Metal (early); Gothic Metal (mid); Melodic Black Metal (later)',
+    'Black.Thrash Metal (early), Black Metal (later)',
+    'Black.Thrash Metal (early), Black.Industrial Metal (later)',
+    'Speed Metal (early), Heavy.Power Metal (later)',
+    'Sludge.Doom Metal, Noise',
+    'NWOBHM (early), Heavy.Power Metal (later)',
+    'Grindcore (early), Brutal Death Metal (later)',
+    'Brutal Death Metal (early), Melodic Deathcore (later)',
+    'Black Metal (early), Black.Thrash Metal (later)',
+    'Folk.Melodic Death Metal, Folk',
+    'Black Metal, Dark Ambient',
+    'Death Metal (early); Melodic Death Metal (later',
+    'Melodic Death.Thrash Metal (early); Melodic Black.Death Metal (later)',
+    'Melodic Death Metal (early); Technical.Melodic Death Metal (later)',
+    'Thrash Metal (early); Black Metal (later)',
+    'Death.Black Metal (early); Folk Black Metal (later)',
+    'Black.Death Metal (early); Death Metal (later)'
+];
+
+*/

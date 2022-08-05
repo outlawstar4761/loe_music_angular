@@ -76,7 +76,7 @@ const appRoutes: Routes = [
   providers: [
     CookieService,
     {provide:'API_ENDPOINT',useValue:'https://api.outlawdesigns.io:9669/song/'},
-    {provide:'LOE_DOMAIN',useValue:'http://loe.outlawdesigns.io/'},
+    {provide:'LOE_DOMAIN',useValue:'https://loe.outlawdesigns.io/'},
     {provide: 'AUTH_ENDPOINT',useValue:'https://api.outlawdesigns.io:9661/'}
   ],
   entryComponents:[SearchBottomSheetComponent,RatingComponent,SavePlaylistComponent,RandomPlaylistBottomSheetComponent],

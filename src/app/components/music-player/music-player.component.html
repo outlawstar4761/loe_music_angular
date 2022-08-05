@@ -14,9 +14,8 @@
     <mat-progress-bar *ngIf="currentPlaying" mode="determinate" [value]="currentTrackProgress" style="margin-top:5%"></mat-progress-bar>
     <h5 class="mat-body">Volume: {{ volume }}</h5>
     <div *ngFor="let song of playlist; index as i;">
-      <a playFromPlaylist [song]="song">{{song.title}}</a>
-      <a removeFromPlaylist [song]="song" [index]="i"><small>(remove)</small></a>
-      <span *ngIf="currentPlaying && currentPlaying.id == song.id"> - (current)</span>
+      <a playFromPlaylist [song]="song" [ngStyle]="{'color': currentPlaying && currentPlaying.id == song.id ? 'red' : ''}">{{song.track_number}}. {{song.title}}</a>
+      <a removeFromPlaylist [song]="song" [index]="i"><small><button mat-icon-button>-</button></small></a>
     </div>
   </mat-card-content>
   <mat-card-actions>

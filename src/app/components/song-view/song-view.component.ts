@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Song } from '../../models/song';
 
@@ -12,13 +13,16 @@ export class SongViewComponent implements OnInit {
   songs:Song[];
   title:string;
 
-  constructor(private route: ActivatedRoute,private ApiService:ApiService){
+  constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
+    this.ApiService.verifyToken().subscribe(result=>{
+      if(result['error']){
+        this.router.navigateByUrl('/login');
+      }
+    });
     route.params.subscribe(params=>{
       this.title = params['title'];
-      console.log(this.title);
       this.ApiService.search('title',this.title).subscribe((songs)=>{
         this.songs = songs;
-        console.log(this.songs);
       });
     });
   }

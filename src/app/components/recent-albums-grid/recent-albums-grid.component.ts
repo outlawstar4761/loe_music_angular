@@ -15,9 +15,8 @@ export class RecentAlbumsGridComponent implements OnInit {
       this.recentAlbums = [];
       this.recentAlbums = albums;
     });
-    this.ApiService.getRecent(300).subscribe((songs)=>{
-      let labels = this.ApiService.parseAlbums(songs);
-      this.ApiService.buildAlbums(labels);
+    this.ApiService.browse('album').subscribe((labels)=>{
+      this.ApiService.buildAlbums(labels.slice(labels.length - 31,labels.length - 1));
     });
   }
 

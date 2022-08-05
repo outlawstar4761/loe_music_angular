@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Album } from '../../models/album';
 
@@ -11,8 +12,14 @@ import { Album } from '../../models/album';
 export class AlbumViewComponent implements OnInit {
   albums:Album[];
   title:string;
+  genres:string[] = ['Black Metal','Death Metal','Thrash Metal'];
 
-  constructor(private route: ActivatedRoute,private ApiService:ApiService){
+  constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
+    this.ApiService.verifyToken().subscribe(result=>{
+      if(result['error']){
+        this.router.navigateByUrl('/login');
+      }
+    });
     this.ApiService.albums.subscribe(albums=>{
       this.albums = albums;
     });
