@@ -1,0 +1,15 @@
+<form #f="ngForm" (ngSubmit)="onSubmit(f.value)">
+  <mat-form-field>
+    <mat-select name="genre" placeholder="Genre" ngModel>
+      <mat-option *ngFor="let option of genreOptions" [value]="option">
+        {{option}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput type="number" name="limit" placeholder="# Songs" ngModel>
+  </mat-form-field>
+  <p>
+    <button mat-raised-button type="submit" color="accent">Build</button>
+  </p>
+</form>

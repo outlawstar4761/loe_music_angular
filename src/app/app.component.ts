@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ApiService } from './services/api.service';
+import { Album } from './models/album';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,20 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'loe_music_angular';
+  title = 'loe-music';
+  recentAlbums:Album[] = [];
+
+  constructor(private ApiService:ApiService){
+    this.ApiService.checkCookie();
+    this.ApiService.albums.subscribe((albums)=>{
+      this.recentAlbums = [];
+      this.recentAlbums = albums;
+    });
+  }
 }
+
+/*
+Playlist tab
+  implement bottom sheet
+    drop down and submit button
+*/

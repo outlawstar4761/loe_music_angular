@@ -1,0 +1,5 @@
+<mat-grid-list cols="2" rowHeight="1:1">
+  <mat-grid-tile *ngFor="let album of albums" layout-fill>
+    <a routerLink='/album/{{album.title}}'><img [src]="album.cover_path" class="gridAlbum"></a>
+  </mat-grid-tile>
+</mat-grid-list>
