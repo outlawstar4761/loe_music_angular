@@ -1,4 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
+@import '~css-star-rating/css/star-rating.css';
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.button-row {
+  justify-content: space-around;
+  margin-bottom: 5px;
+  /* display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%; */
+}
+.albumPreview{
+  justify-content:space-around;
+  max-width: 250px;
+  max-width: 250px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+.gridAlbum{
+  max-width: 100%;
+  height: auto;
+}
+.card{
+  max-width: 400px;
+  margin: 2%;
+}
+.song-title-btn {
+  text-align: right;
+  width: 300px;
+}
