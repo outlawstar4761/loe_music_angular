@@ -1,8 +1,8 @@
 <mat-card class="card">
   <mat-card-title *ngIf="currentPlaying">
-    <!-- <ng-marquee>
-      <mark style="background-color:inherit">{{ currentPlaying.title }} by <a routerLink='/artist/{{currentPlaying.artist}}'>{{currentPlaying.artist}}</a></mark>
-    </ng-marquee> -->
+    <div class="marquee">
+      <p>{{ currentPlaying.title }} by <a routerLink='/artist/{{currentPlaying.artist}}'>{{currentPlaying.artist}}</a></p>
+    </div>
   </mat-card-title>
   <mat-card-subtitle *ngIf="currentPlaying">
     ({{ currentTrackPostion | humanTime }} / {{ currentTrackDuration | humanTime }})
