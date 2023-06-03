@@ -12,6 +12,7 @@ import { Album } from '../../models/album';
 export class YearViewComponent implements OnInit {
   albums:Album[] = [];
   year:string = '';
+  loading:boolean = false;
 
   constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
     this.ApiService.verifyToken().subscribe(result=>{
@@ -24,8 +25,10 @@ export class YearViewComponent implements OnInit {
     });
     route.params.subscribe(params=>{
       this.year = params['year'];
+      this.loading = true;
       this.ApiService.search('year',this.year).subscribe((songs)=>{
         this.ApiService.buildAlbums(songs);
+        this.loading = false;
       });
     });
   }

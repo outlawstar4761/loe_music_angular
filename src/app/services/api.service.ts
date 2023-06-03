@@ -3,6 +3,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Observable,Subject, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { isDevMode } from '@angular/core';
 import{
   HttpClient,
   HttpRequest,
@@ -54,7 +55,7 @@ export class ApiService {
       if(!response['error']){
         this.authToken = response.token;
         //for prod, change to outlawdesigns.io && true
-        this.cookie.set('auth_token',this.authToken,200,'/','localhost',false,'Strict');
+        isDevMode() ? this.cookie.set('auth_token',this.authToken,200,'/','localhost',false,'Strict'):this.cookie.set('auth_token',this.authToken,200,'/','outlawdesigns.io',true,'Strict');
         this.checkCookie();
       }else{
         this.router.navigateByUrl('/login');
@@ -95,7 +96,12 @@ export class ApiService {
   }
   getRecent(limit:number):Observable<Song[]>{
     let url = this.endpoint + 'recent/' + limit;
-    return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response.map((song)=>{return new Song(song)})}));
+    return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response.map((song)=>{
+      song.file_path = song.file_path.replace(this.regexPattern,this.domain);
+      song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
+      song.url = song.file_path;
+      return new Song(song);
+    })}));
   }
   getRandomPlayList(genre:string,limit:number){
     let url = this.endpoint + 'random/' + genre + '/' + limit;
