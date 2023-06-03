@@ -12,6 +12,7 @@ import { Album } from '../../models/album';
 export class GenreGridComponent implements OnInit {
   albums:Album[] = [];
   genre:string = '';
+  loading:boolean = false;
 
   constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
     this.ApiService.verifyToken().subscribe(result=>{
@@ -24,9 +25,11 @@ export class GenreGridComponent implements OnInit {
     });
     route.params.subscribe(params=>{
       this.genre = params['genre'];
+      this.loading = true;
       this.ApiService.search('genre',this.genre).subscribe((songs)=>{
-        let labels = this.ApiService.parseAlbums(songs);
-        this.ApiService.buildAlbums(labels);
+        //let labels = this.ApiService.parseAlbums(songs);
+        this.ApiService.buildAlbums(songs);
+        this.loading = false;
       });
     });
   }

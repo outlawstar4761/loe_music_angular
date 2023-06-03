@@ -12,6 +12,7 @@ import { Song } from '../../models/song';
 export class SongViewComponent implements OnInit {
   songs:Song[] = [];
   title:string = '';
+  loading:boolean = false;
 
   constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
     this.ApiService.verifyToken().subscribe(result=>{
@@ -21,8 +22,10 @@ export class SongViewComponent implements OnInit {
     });
     route.params.subscribe(params=>{
       this.title = params['title'];
+      this.loading = true;
       this.ApiService.search('title',this.title).subscribe((songs)=>{
         this.songs = songs;
+        this.loading = false;
       });
     });
   }

@@ -26,7 +26,7 @@ export class AlbumViewComponent implements OnInit {
     });
     route.params.subscribe(params=>{
       this.title = params['title'];
-      this.ApiService.buildAlbums([this.title]);
+      this.ApiService.buildAlbumsFromLabels([this.title]);
     });
   }
 

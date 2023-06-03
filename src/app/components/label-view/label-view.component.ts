@@ -12,6 +12,7 @@ import { Album } from '../../models/album';
 export class LabelViewComponent implements OnInit {
   albums:Album[] = [];
   value:string = '';
+  loading:boolean = false;
 
   constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
     this.ApiService.verifyToken().subscribe(result=>{
@@ -23,10 +24,11 @@ export class LabelViewComponent implements OnInit {
       this.albums = albums;
     });
     route.params.subscribe(params=>{
-      this.value = params['publisher'];
+      this.value = params['label'];
+      this.loading = true;
       this.ApiService.search('publisher',this.value).subscribe((songs)=>{
-        let labels = this.ApiService.parseAlbums(songs);
-        this.ApiService.buildAlbums(labels);
+        this.ApiService.buildAlbums(songs);
+        this.loading = false;
       });
     });
   }

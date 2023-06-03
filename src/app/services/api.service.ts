@@ -109,7 +109,7 @@ export class ApiService {
   parseAlbums(songs:Song[]){
     return songs.map((s)=>{return s.album}).filter((v,i,self)=>{return self.indexOf(v) == i})
   }
-  buildAlbums(albums:string[]):void{
+  buildAlbumsFromLabels(albums:string[]):void{
     this.tmpAlbums = [];
     albums.forEach((album)=>{
       this.search('album',album).subscribe((songs)=>{
@@ -133,6 +133,26 @@ export class ApiService {
       this.albums.next(this.tmpAlbums);
     });
   }
+  buildAlbums(songs:Song[]):void{
+    this.tmpAlbums = [];
+    let tmpAlbums:TmpAlbum = this.groupAlbums(songs);
+    let key:keyof typeof tmpAlbums;
+    for(let key in tmpAlbums){
+      let tmpAlbum:Song[] = tmpAlbums[key];
+      let newAlbum = new Album(
+        {
+          title:tmpAlbum[0].album,
+          year:tmpAlbum[0].year,
+          genres:this.parseGenres(tmpAlbum[0].genre),
+          artist:tmpAlbum[0].artist,
+          cover_path:tmpAlbum[0].cover_path,
+          songs:tmpAlbum.sort((a:Song,b:Song)=>{return a.track_number - b.track_number})
+        }
+      );
+      this.tmpAlbums.push(newAlbum);
+    }
+    this.albums.next(this.tmpAlbums);
+  }
   rateSong(songId:number,rating:number):Observable<any>{
     let url = this.endpoint + 'rate/' + songId;
     return this.http.post(url,{rating:rating},{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
@@ -149,6 +169,7 @@ export class ApiService {
     },{});
   }
   parseGenres(genre:string) : string[]{
+    if(!genre) return [];
     let genres: string[] = [];
     let pieces: string[] = genre.split(';');
     pieces.map((piece)=>{

@@ -25,8 +25,7 @@ export class YearViewComponent implements OnInit {
     route.params.subscribe(params=>{
       this.year = params['year'];
       this.ApiService.search('year',this.year).subscribe((songs)=>{
-        let labels = this.ApiService.parseAlbums(songs);
-        this.ApiService.buildAlbums(labels);
+        this.ApiService.buildAlbums(songs);
       });
     });
   }

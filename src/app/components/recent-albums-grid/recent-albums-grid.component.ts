@@ -9,14 +9,17 @@ import { Album } from '../../models/album';
 })
 export class RecentAlbumsGridComponent implements OnInit {
   recentAlbums:Album[] = [];
+  loading:boolean = false;
 
   constructor(private ApiService:ApiService) {
+    this.loading = true;
     this.ApiService.albums.subscribe((albums)=>{
       this.recentAlbums = [];
       this.recentAlbums = albums;
     });
-    this.ApiService.browse('album').subscribe((labels)=>{
-      this.ApiService.buildAlbums(labels.slice(labels.length - 31,labels.length - 1));
+    this.ApiService.getRecent(300).subscribe((songs)=>{
+      this.ApiService.buildAlbums(songs);
+      this.loading = false;
     });
   }
 

@@ -12,6 +12,7 @@ import { Album } from '../../models/album';
 export class CountryViewComponent implements OnInit {
   albums:Album[] = [];
   value:string = '';
+  loading:boolean = false;
 
   constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
     this.ApiService.verifyToken().subscribe(result=>{
@@ -24,9 +25,10 @@ export class CountryViewComponent implements OnInit {
     });
     route.params.subscribe(params=>{
       this.value = params['country'];
+      this.loading = true;
       this.ApiService.search('artist_country',this.value).subscribe((songs)=>{
-        let labels = this.ApiService.parseAlbums(songs);
-        this.ApiService.buildAlbums(labels);
+        this.ApiService.buildAlbums(songs);
+        this.loading = false;
       });
     });
   }
