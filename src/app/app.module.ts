@@ -29,6 +29,8 @@ import { YearViewComponent } from './components/year-view/year-view.component';
 import { RandomPlaylistBottomSheetComponent } from './components/random-playlist-bottom-sheet/random-playlist-bottom-sheet.component';
 
 import { MaterialModule } from './material.module';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 
 const appRoutes: Routes = [
@@ -73,7 +75,13 @@ const appRoutes: Routes = [
     // NgMarqueeModule,
     MaterialModule,
     FormsModule,
-    StarRatingModule.forRoot()
+    StarRatingModule.forRoot(),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     CookieService,
