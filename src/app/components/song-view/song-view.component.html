@@ -1,9 +1,9 @@
 <mat-spinner *ngIf="loading"></mat-spinner>
 <mat-card class="card" *ngFor="let song of songs">
   <mat-card-title><a routerLink='/song/{{song.title}}'>{{song.title}}</a></mat-card-title>
-  <mat-card-subtitle><a routerLink='/artist/{{song.artist}}'>{{song.artist}}</a>, <a routerLink='/year/{{song.year}}'>{{song.year}}</a></mat-card-subtitle>
+  <mat-card-subtitle><a routerLink='/search/artist/{{song.artist}}'>{{song.artist}}</a>, <a routerLink='/search/year/{{song.year}}'>{{song.year}}</a></mat-card-subtitle>
   <mat-card-content>
-    <a routerLink='/album/{{song.album}}'>
+    <a routerLink='/album/{{song.album}}/{{song.artist}}/{{song.year}}'>
       <img [src]="song.cover_path" class="albumPreview">
     </a>
   </mat-card-content>

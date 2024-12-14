@@ -1,14 +1,14 @@
 <mat-card class="card">
   <mat-card-title *ngIf="currentPlaying">
     <div class="marquee">
-      <p>{{ currentPlaying.title }} by <a routerLink='/artist/{{currentPlaying.artist}}'>{{currentPlaying.artist}}</a></p>
+      <p>{{ currentPlaying.title }} by <a routerLink='/search/artist/{{currentPlaying.artist}}'>{{currentPlaying.artist}}</a></p>
     </div>
   </mat-card-title>
   <mat-card-subtitle *ngIf="currentPlaying">
     ({{ currentTrackPostion | humanTime }} / {{ currentTrackDuration | humanTime }})
   </mat-card-subtitle>
   <mat-card-content>
-    <a *ngIf="currentPlaying" routerLink='/album/{{currentPlaying.album}}'>
+    <a *ngIf="currentPlaying" routerLink='/album/{{currentPlaying.album}}/{{currentPlaying.artist}}/{{currentPlaying.year}}'>
       <img [src]="currentPlaying.cover_path" class="albumPreview">
     </a>
     <mat-progress-bar *ngIf="currentPlaying" mode="determinate" [value]="currentTrackProgress" style="margin-top:5%"></mat-progress-bar>

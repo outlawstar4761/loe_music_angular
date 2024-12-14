@@ -12,6 +12,7 @@ import{
 
 import { Song } from '../models/song';
 import { Album } from '../models/album';
+import { Playlist } from '../models/playlist';
 
 interface TmpAlbum {
   [key:string]: any
@@ -79,6 +80,10 @@ export class ApiService {
       },console.log);
     }
   }
+  getSong(UID:number){
+    let url = this.endpoint + '/' + UID;
+    return this.http.get<Song>(url,{headers:this._buildAuthHeader()}).pipe(map( song => new Song(song)));
+  }
   search(field:string,query:string):Observable<Song[]>{
     let url = this.endpoint + 'search/' + field + '/' + query;
     return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{
@@ -111,6 +116,10 @@ export class ApiService {
       song.url = song.file_path;
       return new Song(song);
     })}));
+  }
+  getMyPlaylists(){
+    let url = this.endpoint + 'list/';
+    return this.http.get<Playlist[]>(url,{headers:this._buildAuthHeader()}).pipe(map( response => response.map(playlist => new Playlist(playlist))));
   }
   parseAlbums(songs:Song[]){
     return songs.map((s)=>{return s.album}).filter((v,i,self)=>{return self.indexOf(v) == i})

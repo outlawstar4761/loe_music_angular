@@ -1,9 +1,9 @@
 <mat-card class="card" *ngFor="let album of albums">
   <mat-card-title>{{album.title}}</mat-card-title>
   <mat-card-subtitle>
-    <a routerLink='/artist/{{album.artist}}'>{{album.artist}} </a>,
-    <a *ngFor="let genre of album.genres" routerLink='/genre/{{genre}}'>{{genre}}, </a>
-    <a routerLink='/year/{{album.year}}'>{{album.year}}</a>
+    <a routerLink='/search/artist/{{album.artist}}'>{{album.artist}} </a>,
+    <a *ngFor="let genre of album.genres" routerLink='/search/genre/{{genre}}'>{{genre}}, </a>
+    <a routerLink='/search/year/{{album.year}}'>{{album.year}}</a>
   </mat-card-subtitle>
   <mat-card-content>
     <img [src]="album.cover_path" class="albumPreview">

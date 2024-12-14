@@ -1,0 +1,12 @@
+<form #f="ngForm" (ngSubmit)="onSubmit(f.value)">
+  <mat-form-field>
+    <mat-select name="playlist" placeholder="Playlist" ngModel>
+      <mat-option *ngFor="let option of myplaylists" [value]="option.UID">
+        {{option.Label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <p>
+    <button mat-raised-button type="submit" color="accent">Load</button>
+  </p>
+</form>

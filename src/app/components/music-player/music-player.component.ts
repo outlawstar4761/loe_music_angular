@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { MusicPlayerService } from 'ngx-soundmanager2';
 import { ApiService } from '../../services/api.service';
 import { Album } from '../../models/album';
@@ -14,7 +15,7 @@ import { SavePlaylistComponent } from '../save-playlist/save-playlist.component'
 export class MusicPlayerComponent implements OnInit {
 
   mute:boolean = false;
-  currentPlaying:any = {};
+  currentPlaying:any = null;
   currentTrackPostion:number = 0;
   currentTrackDuration:number = 0;
   currentTrackProgress:number = 0;
@@ -25,7 +26,7 @@ export class MusicPlayerComponent implements OnInit {
   private _musicPlayerTrackIdSubscription:any;
   private _musicPlayerVolumeSubscription:any;
 
-  constructor(private _musicPlayerService:MusicPlayerService,private ApiService:ApiService,public dialog: MatDialog) {
+  constructor(private _titleService:Title,private _musicPlayerService:MusicPlayerService,private ApiService:ApiService,public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -35,6 +36,12 @@ export class MusicPlayerComponent implements OnInit {
     .subscribe((event:any)=>{
       this.mute = event.data;
     });
+
+    if(this.currentPlaying){
+      this._titleService.setTitle(this.currentPlaying.title + ' | ' + this.currentPlaying.artist + ', ' + this.currentPlaying.album + ' (' + this.currentPlaying.year + ')');
+    }else{
+      this._titleService.setTitle('LOE Music');
+    }
 
     //Subscribe for track changes
     this.currentPlaying = this._musicPlayerService.currentTrackData();

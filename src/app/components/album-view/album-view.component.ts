@@ -13,6 +13,8 @@ import { Album } from '../../models/album';
 export class AlbumViewComponent implements OnInit {
   albums:Album[] = [];
   title:string = '';
+  artist:string = '';
+  year:number = 1800;
   genres:string[] = ['Black Metal','Death Metal','Thrash Metal'];
 
   constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
@@ -21,12 +23,13 @@ export class AlbumViewComponent implements OnInit {
         this.router.navigateByUrl('/login');
       }
     });
-    this.ApiService.albums.subscribe(albums=>{
-      this.albums = albums;
-    });
     route.params.subscribe(params=>{
       this.title = params['title'];
-      this.ApiService.buildAlbumsFromLabels([this.title]);
+      this.artist = params['artist'];
+      this.year = parseInt(params['year']);
+      this.ApiService.albums.subscribe(albums=>{
+        this.albums = albums.filter( e =>  e.title == this.title && e.artist == this.artist && e.year == this.year);
+      });
     });
   }
 

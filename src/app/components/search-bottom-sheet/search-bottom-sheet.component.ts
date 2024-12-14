@@ -29,7 +29,11 @@ export class SearchBottomSheetComponent implements OnInit {
 
   onSubmit(value:IForm):void{
     console.log(value);
-    let path = value.option + '/' + value.query;
+    let path = '';
+    if(value.option != 'song'){
+      path += 'search/';
+    }
+    path += value.option + '/' + value.query;
     this.router.navigateByUrl(path);
     this.bottomSheetRef.dismiss();
   }

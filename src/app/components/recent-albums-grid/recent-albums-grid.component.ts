@@ -22,6 +22,14 @@ export class RecentAlbumsGridComponent implements OnInit {
       this.loading = false;
     });
   }
+  addFiveRandomSongs(){
+    let songs = this.recentAlbums.map(e => e.songs).flat();
+    let selectedSongs = [];
+    for(let i = 0; i < 5; i++){
+      selectedSongs.push(songs[Math.floor(Math.random() * (songs.length - 1))]);
+    }
+    return selectedSongs;
+  }
 
   ngOnInit() {
   }

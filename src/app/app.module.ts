@@ -12,21 +12,19 @@ import { NgxSoundmanager2Module } from 'ngx-soundmanager2';
 
 import { AppComponent } from './app.component';
 import { MusicPlayerComponent } from './components/music-player/music-player.component';
-import { AlbumViewComponent } from './components/album-view/album-view.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { RecentAlbumsGridComponent } from './components/recent-albums-grid/recent-albums-grid.component';
-import { ArtistGridComponent } from './components/artist-grid/artist-grid.component';
+import { AlbumViewComponent } from './components/album-view/album-view.component';
 import { SongViewComponent } from './components/song-view/song-view.component';
 import { SearchBottomSheetComponent } from './components/search-bottom-sheet/search-bottom-sheet.component';
-import { GenreGridComponent } from './components/genre-grid/genre-grid.component';
 import { LoginComponent } from './components/login/login.component';
 import { RatingComponent } from './components/rating/rating.component';
 import { SavePlaylistComponent } from './components/save-playlist/save-playlist.component';
-import { LabelViewComponent } from './components/label-view/label-view.component';
-import { CountryViewComponent } from './components/country-view/country-view.component';
-import { YearViewComponent } from './components/year-view/year-view.component';
 import { RandomPlaylistBottomSheetComponent } from './components/random-playlist-bottom-sheet/random-playlist-bottom-sheet.component';
+
+import {ResultGridComponent} from './components/result-grid/result-grid.component';
+import {MyPlaylistBottomSheetComponent} from './components/my-playlist-bottom-sheet/my-playlist-bottom-sheet.component';
 
 import { MaterialModule } from './material.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -37,13 +35,9 @@ const appRoutes: Routes = [
   {path:'',redirectTo:'/login',pathMatch:'full'},
   {path:'player',component:MusicPlayerComponent},
   {path:'recent',component:RecentAlbumsGridComponent},
-  {path:'album/:title',component:AlbumViewComponent},
-  {path:'artist/:artist',component:ArtistGridComponent},
+  {path:'search/:key/:value',component:ResultGridComponent},
   {path:'song/:title',component:SongViewComponent},
-  {path:'genre/:genre',component:GenreGridComponent},
-  {path:'label/:label',component:LabelViewComponent},
-  {path:'country/:country',component:CountryViewComponent},
-  {path:'year/:year',component:YearViewComponent},
+  {path:'album/:title/:artist/:year',component:AlbumViewComponent},
   {path:'login',component:LoginComponent}
 ];
 
@@ -54,17 +48,14 @@ const appRoutes: Routes = [
     AlbumViewComponent,
     NavbarComponent,
     RecentAlbumsGridComponent,
-    ArtistGridComponent,
     SongViewComponent,
     SearchBottomSheetComponent,
-    GenreGridComponent,
     LoginComponent,
     RatingComponent,
     SavePlaylistComponent,
-    LabelViewComponent,
-    CountryViewComponent,
-    YearViewComponent,
-    RandomPlaylistBottomSheetComponent
+    ResultGridComponent,
+    RandomPlaylistBottomSheetComponent,
+    MyPlaylistBottomSheetComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),

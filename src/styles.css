@@ -50,3 +50,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     0%   { transform: translate(0, 0); }
     100% { transform: translate(-100%, 0); }
 }
+.randomSelectionContainer{
+  z-index:2;
+  position : fixed;
+  display : flex;
+  align-self : flex-end;
+  bottom : 2%;
+  margin-bottom : 34px;
+  right:0;
+  margin-right: 50px;
+}
+.larger-icon {
+  transform: scale(2); /* Adjust the scale factor as needed */
+}
