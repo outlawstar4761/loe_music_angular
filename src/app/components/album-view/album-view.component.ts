@@ -17,7 +17,11 @@ export class AlbumViewComponent implements OnInit {
   year:number = 1800;
   genres:string[] = ['Black Metal','Death Metal','Thrash Metal'];
 
-  constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private ApiService:ApiService
+  ){
     this.ApiService.verifyToken().subscribe(result=>{
       if(result['error']){
         this.router.navigateByUrl('/login');
@@ -27,13 +31,17 @@ export class AlbumViewComponent implements OnInit {
       this.title = params['title'];
       this.artist = params['artist'];
       this.year = parseInt(params['year']);
-      this.ApiService.albums.subscribe(albums=>{
-        this.albums = albums.filter( e =>  e.title == this.title && e.artist == this.artist && e.year == this.year);
-      });
+      this.ApiService.buildAlbumsFromLabels([this.title]);
+    });
+    this.ApiService.albums.subscribe(albums=>{
+      this.albums = albums;
     });
   }
 
   ngOnInit() {
+  }
+  get filteredAlbums(){
+    return this.albums.filter( e =>  e.title == this.title && e.artist == this.artist && e.year == this.year);
   }
 
 }

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, ExtraOptions } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { StarRatingModule } from 'angular-star-rating';
@@ -40,6 +40,9 @@ const appRoutes: Routes = [
   {path:'album/:title/:artist/:year',component:AlbumViewComponent},
   {path:'login',component:LoginComponent}
 ];
+const routeOptions: ExtraOptions = {
+  scrollPositionRestoration:'top'
+};
 
 @NgModule({
   declarations: [
@@ -58,7 +61,7 @@ const appRoutes: Routes = [
     MyPlaylistBottomSheetComponent
   ],
   imports: [
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes,routeOptions),
     NgxSoundmanager2Module.forRoot(),
     BrowserModule,
     HttpClientModule,

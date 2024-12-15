@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { MusicPlayerService } from 'ngx-soundmanager2';
 import { ApiService } from './services/api.service';
-import { Album } from './models/album';
+// import { Album } from './models/album';
 
 @Component({
   selector: 'app-root',
@@ -8,20 +10,20 @@ import { Album } from './models/album';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'loe-music';
-  recentAlbums:Album[] = [];
+  private _musicPlayerTrackIdSubscription:any;
+  currentPlaying:any = null;
 
-  constructor(private ApiService:ApiService){
+  constructor(private _titleService:Title, private _musicPlayerService:MusicPlayerService, private ApiService:ApiService){
     this.ApiService.checkCookie();
-    this.ApiService.albums.subscribe((albums)=>{
-      this.recentAlbums = [];
-      this.recentAlbums = albums;
+    this.currentPlaying = this._musicPlayerService.currentTrackData();
+    this._musicPlayerTrackIdSubscription = this._musicPlayerService.musicPlayerTrackEventEmitter
+    .subscribe((event:any)=>{
+      this.currentPlaying = this._musicPlayerService.currentTrackData();
+      if(this.currentPlaying){
+        this._titleService.setTitle(this.currentPlaying.title + ' | ' + this.currentPlaying.artist + ', ' + this.currentPlaying.album + ' (' + this.currentPlaying.year + ')');
+      }else{
+        this._titleService.setTitle('LOE Music');
+      }
     });
   }
 }
-
-/*
-Playlist tab
-  implement bottom sheet
-    drop down and submit button
-*/

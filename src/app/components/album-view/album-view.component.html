@@ -1,4 +1,4 @@
-<mat-card class="card" *ngFor="let album of albums">
+<mat-card class="card" *ngFor="let album of filteredAlbums">
   <mat-card-title>{{album.title}}</mat-card-title>
   <mat-card-subtitle>
     <a routerLink='/search/artist/{{album.artist}}'>{{album.artist}} </a>,
