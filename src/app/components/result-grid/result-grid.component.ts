@@ -16,11 +16,6 @@ export class ResultGridComponent implements OnInit {
   loading:boolean = false;
 
   constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
-    this.ApiService.verifyToken().subscribe(result=>{
-      if(result['error']){
-        this.router.navigateByUrl('/login');
-      }
-    });
     this.ApiService.albums.subscribe(albums=>{
       this.albums = albums;
     });

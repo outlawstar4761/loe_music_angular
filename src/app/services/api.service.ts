@@ -1,7 +1,7 @@
 import { Injectable,Inject } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable,Subject, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { from, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { isDevMode } from '@angular/core';
 import{
@@ -9,10 +9,12 @@ import{
   HttpRequest,
   HttpHeaders
 } from '@angular/common/http';
-
+import loeClient from '@outlawdesigns/loe-rest-client';
 import { Song } from '../models/song';
 import { Album } from '../models/album';
 import { Playlist } from '../models/playlist';
+
+console.log(typeof loeClient);
 
 interface TmpAlbum {
   [key:string]: any
@@ -23,103 +25,144 @@ interface TmpAlbum {
 })
 
 export class ApiService {
-  endpoint:string;
-  domain:string;
-  authEndPoint:string;
-  authToken:string = '';
+  // isInitialized:bool;
+  apiUrl:string;
+  authDiscoveryUri:string;
+  authClientId:string;
+  authRedirectUrl:string;
+  authLogoutUrl:string;
+  authScope:string;
   regexPattern:RegExp;
   tmpAlbums:Album[] = [];
   albums:Subject<Album[]> = new BehaviorSubject<Album[]>([]);
 
+  endpoint:string;
+  domain:string;
+  authToken:string;
+
+
   constructor(
-    @Inject('API_ENDPOINT') ENDPOINT:string,
-    @Inject('LOE_DOMAIN') DOMAIN:string,
-    @Inject('AUTH_ENDPOINT') AUTH:string,
+    @Inject('AUTH_DISCOVERY_URI') AUTH_DISCOVERY_URI:string,
+    @Inject('AUTH_CLIENT_ID') AUTH_CLIENT_ID:string,
+    @Inject('AUTH_REDIRECT_URL') AUTH_REDIRECT_URL:string,
+    @Inject('AUTH_LOGOUT_URL') AUTH_LOGOUT_URL:string,
+    @Inject('AUTH_SCOPE') AUTH_SCOPE:string,
+    @Inject('API_ENDPOINT') API_ENDPOINT:string,
+    @Inject('LOE_DOMAIN') LOE_DOMAIN:string,
     private http:HttpClient,
     private cookie:CookieService,
     private router:Router) {
-    this.endpoint = ENDPOINT;
-    this.domain = DOMAIN;
-    this.authEndPoint = AUTH;
-    this.regexPattern = /\/LOE\//;
+      this.regexPattern = /\/LOE\//;
+      this.authDiscoveryUri = AUTH_DISCOVERY_URI;
+      this.authClientId = AUTH_CLIENT_ID;
+      this.authRedirectUrl = AUTH_REDIRECT_URL;
+      this.authLogoutUrl = AUTH_LOGOUT_URL;
+      this.authScope = AUTH_SCOPE;
+      this.apiUrl = API_ENDPOINT;
+      this.domain = LOE_DOMAIN;
+      // this.isInitialized = false;
+      this.endpoint = 'https://api.outlawdesigns.io:9669/song';
+      this.authToken = '123456';
   }
-  _buildAuthHeader():HttpHeaders{
-    return new HttpHeaders({'auth_token':this.authToken});
-  }
-  authenticate(username:string,password:string):Observable<any>{
-    let headers = new HttpHeaders({'request_token':username,'password':password});
-    let url = this.authEndPoint + 'authenticate';
-    return this.http.get(url,{headers:headers}).pipe(map(response=>{return response}));
-  }
-  login(username:string,password:string):void{
-    this.authenticate(username,password).subscribe((response)=>{
-      if(!response['error']){
-        this.authToken = response.token;
-        //for prod, change to outlawdesigns.io && true
-        isDevMode() ? this.cookie.set('auth_token',this.authToken,200,'/','localhost',false,'Strict'):this.cookie.set('auth_token',this.authToken,200,'/','outlawdesigns.io',true,'Strict');
-        this.checkCookie();
-      }else{
-        this.router.navigateByUrl('/login');
+  initApiClient():Promise<void>{
+    return new Promise(async (resolve, reject)=>{
+      try{
+        loeClient.init(this.apiUrl, this.authScope);
+        await loeClient.get().auth.init(this.authDiscoveryUri,this.authClientId);
+        // this.isInitialized = true;
+        resolve();
+      }catch(err){
+        console.error(err);
+        reject(err);
       }
     });
   }
-  verifyToken():Observable<any>{
-    let url = this.authEndPoint + '/verify';
-    return this.http.get<any>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
-  }
-  checkCookie():void{
-    console.log('checking cookie...');
-    if(this.cookie.check('auth_token')){
-      this.authToken = this.cookie.get('auth_token');
-      this.verifyToken().subscribe((response)=>{
-        if(!response['error']){
-          this.router.navigateByUrl('/recent');
-        }else{
-          this.router.navigateByUrl('/login');
-        }
-      },console.log);
+  async verifyToken():Promise<void>{
+    if(!this.cookie.check('oathTokenSet')){
+      const challengeResults = await loeClient.get().auth.authorizationCodeFlow(this.authRedirectUrl,this.authScope,[this.apiUrl]);
+      const verifier = challengeResults.codeVerifier;
+      const state = challengeResults.state;
+      sessionStorage.setItem('oauth_state',state);
+      sessionStorage.setItem('oauth_code_verifier',verifier);
+      window.location.href = challengeResults.redirectUri;
+      return;
     }
+    try{
+      const tokenSet = JSON.parse(this.cookie.get('oathTokenSet'));
+      const user = await loeClient.get().auth.verifyAccessToken(tokenSet.access_token,[this.apiUrl]);
+      this.router.navigateByUrl('/recent');
+    }catch(err){
+      console.error(err);
+      //if something, authorizationCodeFlow()..
+    }
+  }
+  async swapAuthorizationToken(authorizationCode:string):Promise<void>{
+    const state = sessionStorage.getItem('oauth_state');
+    const verifier = sessionStorage.getItem('oauth_code_verifier');
+    let url = new URL(window.location.href);
+    if(!url.pathname.endsWith('/')){
+      url.pathname += '/';
+    }
+    await loeClient.get().auth.completeAuthFlow(url,state,verifier);
+    const tokenSet = loeClient.get().auth.getTokenSet();
+    this.cookie.set('oathTokenSet',JSON.stringify(tokenSet));
+    console.log(tokenSet);
+    this.router.navigateByUrl('/recent');
+  }
+  _buildAuthHeader():HttpHeaders{
+    return new HttpHeaders({'auth_token':this.authToken});
   }
   getSong(UID:number){
     let url = this.endpoint + '/' + UID;
     return this.http.get<Song>(url,{headers:this._buildAuthHeader()}).pipe(map( song => new Song(song)));
   }
   search(field:string,query:string):Observable<Song[]>{
-    let url = this.endpoint + 'search/' + field + '/' + query;
-    return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{
-      return response.map((song)=>{
+    return from(loeClient.get().songs.search(field,query) as Promise<any[]>).pipe(map((data: any[])=>{
+      return data.map(song => {
         song.file_path = song.file_path.replace(this.regexPattern,this.domain);
         song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
-        song.url = song.file_path;
+        song.url = song.file_path
         return new Song(song);
-      })
+      });
     }));
   }
   browse(field:string):Observable<string[]>{
-    let url = this.endpoint + 'browse/' + field;
-    return this.http.get<string[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
+    return from(loeClient.get().songs.browse(field) as Promise<string[]>).pipe(map((data: string[])=>{
+      return data;
+    }));
   }
   getRecent(limit:number):Observable<Song[]>{
-    let url = this.endpoint + 'recent/' + limit;
-    return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response.map((song)=>{
-      song.file_path = song.file_path.replace(this.regexPattern,this.domain);
-      song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
-      song.url = song.file_path;
-      return new Song(song);
-    })}));
+    return from(loeClient.get().songs.getRecent(limit) as Promise<any[]>).pipe(map((data: any[])=>{
+      return data.map(song => {
+        song.file_path = song.file_path.replace(this.regexPattern,this.domain);
+        song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
+        song.url = song.file_path
+        return new Song(song);
+      });
+    }));
   }
   getRandomPlayList(genre:string,limit:number){
-    let url = this.endpoint + 'random/' + genre + '/' + limit;
-    return this.http.get<Song[]>(url,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response.map((song)=>{
-      song.file_path = song.file_path.replace(this.regexPattern,this.domain);
-      song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
-      song.url = song.file_path;
-      return new Song(song);
-    })}));
+    return from(loeClient.get().songs.getRandomPlaylist(genre,limit) as Promise<any[]>).pipe(map((data: any[])=>{
+      return data.map(song => {
+        song.file_path = song.file_path.replace(this.regexPattern,this.domain);
+        song.cover_path = song.cover_path.replace(this.regexPattern,this.domain);
+        song.url = song.file_path
+        return new Song(song);
+      });
+    }));
   }
   getMyPlaylists(){
-    let url = this.endpoint + 'list/';
-    return this.http.get<Playlist[]>(url,{headers:this._buildAuthHeader()}).pipe(map( response => response.map(playlist => new Playlist(playlist))));
+    return from(loeClient.get().songs.getMyPlaylists() as Promise<any[]>).pipe(map((data: any[])=>{
+      return data.map(playlist => {
+        return new Playlist(playlist);
+      });
+    }));
+  }
+  rateSong(songId:number,rating:number):Observable<any>{
+    return from(loeClient.get().songs.rate(songId,rating)).pipe(map( res => res));
+  }
+  savePlaylist(playlist:object){
+    return from(loeClient.get().songs.savePlaylist(playlist)).pipe(map( res => res));
   }
   parseAlbums(songs:Song[]){
     return songs.map((s)=>{return s.album}).filter((v,i,self)=>{return self.indexOf(v) == i})
@@ -168,14 +211,6 @@ export class ApiService {
     }
     this.albums.next(this.tmpAlbums);
   }
-  rateSong(songId:number,rating:number):Observable<any>{
-    let url = this.endpoint + 'rate/' + songId;
-    return this.http.post(url,{rating:rating},{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
-  }
-  savePlaylist(playlist:object){
-    let url = this.endpoint + 'list/';
-    return this.http.post(url,playlist,{headers:this._buildAuthHeader()}).pipe(map(response=>{return response}));
-  }
   groupAlbums(songs:Song[]){
     return songs.reduce((accumulator:TmpAlbum,song)=>{
       if(!accumulator[song['album'] + '_' + song['artist'] + '_' + song['year']]) { accumulator[song['album'] + '_' + song['artist'] + '_' + song['year']] = []}
@@ -197,28 +232,3 @@ export class ApiService {
     return genres;
   }
 }
-
-/*
-
-genres = [
-    'Black Metal (early), Black.Doom Metal (later)',
-    'Grindcore, Black Metal (early); Gothic Metal (mid); Melodic Black Metal (later)',
-    'Black.Thrash Metal (early), Black Metal (later)',
-    'Black.Thrash Metal (early), Black.Industrial Metal (later)',
-    'Speed Metal (early), Heavy.Power Metal (later)',
-    'Sludge.Doom Metal, Noise',
-    'NWOBHM (early), Heavy.Power Metal (later)',
-    'Grindcore (early), Brutal Death Metal (later)',
-    'Brutal Death Metal (early), Melodic Deathcore (later)',
-    'Black Metal (early), Black.Thrash Metal (later)',
-    'Folk.Melodic Death Metal, Folk',
-    'Black Metal, Dark Ambient',
-    'Death Metal (early); Melodic Death Metal (later',
-    'Melodic Death.Thrash Metal (early); Melodic Black.Death Metal (later)',
-    'Melodic Death Metal (early); Technical.Melodic Death Metal (later)',
-    'Thrash Metal (early); Black Metal (later)',
-    'Death.Black Metal (early); Folk Black Metal (later)',
-    'Black.Death Metal (early); Death Metal (later)'
-];
-
-*/

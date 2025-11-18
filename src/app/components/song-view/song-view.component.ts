@@ -15,11 +15,6 @@ export class SongViewComponent implements OnInit {
   loading:boolean = false;
 
   constructor(private route: ActivatedRoute,private router:Router,private ApiService:ApiService){
-    this.ApiService.verifyToken().subscribe(result=>{
-      if(result['error']){
-        this.router.navigateByUrl('/login');
-      }
-    });
     route.params.subscribe(params=>{
       this.title = params['title'];
       this.loading = true;

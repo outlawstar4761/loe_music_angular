@@ -8,15 +8,10 @@ import { ApiService } from '../../services/api.service';
 })
 export class LoginComponent implements OnInit {
 
-  password:string = '';
-  username:string = '';
-
-  constructor(private ApiService:ApiService) { }
+  constructor(private api:ApiService) { }
 
   ngOnInit() {
-  }
-  login():void{
-    this.ApiService.login(this.username,this.password);
+    this.api.verifyToken();
   }
 
 }

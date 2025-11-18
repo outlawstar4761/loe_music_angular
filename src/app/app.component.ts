@@ -14,7 +14,6 @@ export class AppComponent {
   currentPlaying:any = null;
 
   constructor(private _titleService:Title, private _musicPlayerService:MusicPlayerService, private ApiService:ApiService){
-    this.ApiService.checkCookie();
     this.currentPlaying = this._musicPlayerService.currentTrackData();
     this._musicPlayerTrackIdSubscription = this._musicPlayerService.musicPlayerTrackEventEmitter
     .subscribe((event:any)=>{
