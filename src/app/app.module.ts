@@ -12,6 +12,7 @@ import { NgxSoundmanager2Module } from 'ngx-soundmanager2';
 
 import { AppComponent } from './app.component';
 import { ApiService } from './services/api.service';
+import { AppConfigService } from './services/config.service';
 import { MusicPlayerComponent } from './components/music-player/music-player.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -32,8 +33,11 @@ import { MaterialModule } from './material.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
-export function initializeApiClient(api: ApiService) {
-  return () => api.initApiClient();
+// export function initializeApiClient(api: ApiService) {
+//   return () => api.initApiClient();
+// }
+export function initializeConfig(config: AppConfigService){
+  return () => config.load();
 }
 
 const appRoutes: Routes = [
@@ -87,15 +91,16 @@ const routeOptions: ExtraOptions = {
   providers: [
     CookieService,
     ApiService,
-    {provide:'API_ENDPOINT',useValue:'https://loe-service.outlawdesigns.io'},
-    {provide:'LOE_DOMAIN',useValue:'https://loe.outlawdesigns.io/'},
-    {provide: 'AUTH_ENDPOINT',useValue:'https://api.outlawdesigns.io:9661/'},
-    {provide: 'AUTH_DISCOVERY_URI', useValue: 'https://auth.outlawdesigns.io/.well-known/openid-configuration'},
-    {provide: 'AUTH_CLIENT_ID', useValue: 'loesuite-music-webapp'},
-    {provide: 'AUTH_REDIRECT_URL', useValue: 'http://localhost:3000/token/'},
-    {provide: 'AUTH_LOGOUT_URL', useValue: 'http://localhost:3000/logout/'},
-    {provide: 'AUTH_SCOPE', useValue: 'offline_access offline openid'},
-    {provide: APP_INITIALIZER, useFactory: initializeApiClient, deps: [ApiService], multi: true}
+    AppConfigService,
+    { provide: 'API_ENDPOINT', useFactory: (cfg: AppConfigService) => cfg.get('API_ENDPOINT'), deps: [AppConfigService] },
+    { provide: 'LOE_DOMAIN', useFactory: (cfg: AppConfigService) => cfg.get('LOE_DOMAIN'), deps: [AppConfigService] },
+    { provide: 'AUTH_CLIENT_ID', useFactory: (cfg: AppConfigService) => cfg.get('AUTH_CLIENT_ID'), deps: [AppConfigService] },
+    { provide: 'AUTH_DISCOVERY_URI', useFactory: (cfg: AppConfigService) => cfg.get('AUTH_DISCOVERY_URI'), deps: [AppConfigService] },
+    { provide: 'AUTH_REDIRECT_URL', useFactory: (cfg: AppConfigService) => cfg.get('AUTH_REDIRECT_URL'), deps: [AppConfigService] },
+    { provide: 'AUTH_LOGOUT_URL', useFactory: (cfg: AppConfigService) => cfg.get('AUTH_LOGOUT_URL'), deps: [AppConfigService] },
+    { provide: 'AUTH_SCOPE', useFactory: (cfg: AppConfigService) => cfg.get('AUTH_SCOPE'), deps: [AppConfigService] },
+    // {provide: APP_INITIALIZER, useFactory: initializeApiClient, deps: [ApiService, AppConfigService], multi: true},
+    {provide: APP_INITIALIZER, useFactory: initializeConfig, deps: [AppConfigService], multi: true}
   ],
   entryComponents:[SearchBottomSheetComponent,RatingComponent,SavePlaylistComponent,RandomPlaylistBottomSheetComponent],
   bootstrap: [AppComponent]

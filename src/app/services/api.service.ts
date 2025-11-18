@@ -25,7 +25,7 @@ interface TmpAlbum {
 })
 
 export class ApiService {
-  // isInitialized:bool;
+  isInitialized:boolean = false;
   apiUrl:string;
   authDiscoveryUri:string;
   authClientId:string;
@@ -35,11 +35,7 @@ export class ApiService {
   regexPattern:RegExp;
   tmpAlbums:Album[] = [];
   albums:Subject<Album[]> = new BehaviorSubject<Album[]>([]);
-
-  endpoint:string;
   domain:string;
-  authToken:string;
-
 
   constructor(
     @Inject('AUTH_DISCOVERY_URI') AUTH_DISCOVERY_URI:string,
@@ -61,8 +57,11 @@ export class ApiService {
       this.apiUrl = API_ENDPOINT;
       this.domain = LOE_DOMAIN;
       // this.isInitialized = false;
-      this.endpoint = 'https://api.outlawdesigns.io:9669/song';
-      this.authToken = '123456';
+  }
+  async ensureInitialized():Promise<void>{
+    if (this.isInitialized) return;
+    await this.initApiClient();
+    this.isInitialized = true;
   }
   initApiClient():Promise<void>{
     return new Promise(async (resolve, reject)=>{
@@ -106,15 +105,11 @@ export class ApiService {
     await loeClient.get().auth.completeAuthFlow(url,state,verifier);
     const tokenSet = loeClient.get().auth.getTokenSet();
     this.cookie.set('oathTokenSet',JSON.stringify(tokenSet));
-    console.log(tokenSet);
+    //console.log(tokenSet);
     this.router.navigateByUrl('/recent');
   }
-  _buildAuthHeader():HttpHeaders{
-    return new HttpHeaders({'auth_token':this.authToken});
-  }
-  getSong(UID:number){
-    let url = this.endpoint + '/' + UID;
-    return this.http.get<Song>(url,{headers:this._buildAuthHeader()}).pipe(map( song => new Song(song)));
+  getSong(UID:number):Observable<Song>{
+    return from(loeClient.get().songs.get(UID)).pipe(map( res => new Song(res)));
   }
   search(field:string,query:string):Observable<Song[]>{
     return from(loeClient.get().songs.search(field,query) as Promise<any[]>).pipe(map((data: any[])=>{

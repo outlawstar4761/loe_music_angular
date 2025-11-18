@@ -20,7 +20,11 @@ export class AuthCallBackHandlerComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       if(params['code']){
-        this.api.swapAuthorizationToken(params['code']);
+        this.api.ensureInitialized().then(()=>{
+          this.api.swapAuthorizationToken(params['code'])
+        }).catch((err)=>{
+          console.log(err);
+        });
       }else if(params['error']){
         // console.log(params['error']);
         this.error = params['error'];

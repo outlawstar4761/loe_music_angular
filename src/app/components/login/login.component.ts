@@ -11,7 +11,11 @@ export class LoginComponent implements OnInit {
   constructor(private api:ApiService) { }
 
   ngOnInit() {
-    this.api.verifyToken();
+    this.api.ensureInitialized().then(()=>{
+      this.api.verifyToken();
+    }).catch((err)=>{
+      console.log(err);
+    });
   }
 
 }
